@@ -1,0 +1,11 @@
+# $ sudo -u postgres createuser -d -e -P todo_app
+#   password = muchtodoaboutnothing
+#   allow to create role, echo back, set password
+
+Alembic for handling database migrations  (also look at SQLAlchemy-migrate)
+Flask-Security for handling
+
+Structure from miguel grinberg's flask mega tutorial - http://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
+
+#!/usr/bin/env python  # problems with running $ run.py.  $ ./run.py after UNIX EOL ending conversion worked
+
