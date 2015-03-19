@@ -6,6 +6,15 @@ Alembic for handling database migrations  (also look at SQLAlchemy-migrate)
 Flask-Security for handling
 
 Structure from miguel grinberg's flask mega tutorial - http://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
+Alembic and config.py code from https://realpython.com/blog/python/flask-by-example-part-1-project-setup/
 
 #!/usr/bin/env python  # problems with running $ run.py.  $ ./run.py after UNIX EOL ending conversion worked
+
+Trying to pip install psycopg2, got "Error: You need to install postgresql-server-dev-X.Y for building a server-side
+extension or libpq-dev for building a client-side application."
+sudo apt-get install libpq-dev
+
+Then error: command 'i686-linux-gnu-gcc' failed with exit status 1 trying to pip install psycopg2
+sudo apt-get install python-dev
+That got it to work
 

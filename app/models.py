@@ -21,6 +21,7 @@ class Todo(db.Model):
     start_date = db.Column(db.DateTime)
     due_date = db.Column(db.DateTime)
     completed = db.Column(db.Boolean)
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
     project = db.relationship('Project', 
                 backref=db.backref('todos', lazy='dynamic'))
 

@@ -3,7 +3,16 @@
 	<h1>Projects</h1>
 	<p>
 		<ul>
+			{% for project in projects: %}
 			<li>{{project.name}}</li>
+				{% if project.todos.all(): %}
+					<ul>
+						{% for todo in project.todos.all(): %}
+							<li>{{todo.name}}</li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+			{% endfor %}
 		</ul>
 	</p>
 {% endblock %}
