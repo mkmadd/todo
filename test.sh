@@ -17,3 +17,8 @@ workon todo
 # FOR Heroku
 # create file called Procfile:
 # web: gunicorn app:app
+# create file called runtime.txt:
+# python-2.7.6
+
+# Install Heroku Toolbelt
+# wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
