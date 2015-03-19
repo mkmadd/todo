@@ -38,3 +38,7 @@ workon todo
 # $ heroku addons:add heroku-postgresql:dev --app todo-pro
 # $ heroku run python run.py --app todo-stage
 # $ heroku run python run.py --app todo-stage
+
+# Apply db migrations to Heroku
+# $ heroku run python manage.py db upgrade --app todo-stage
+# $ heroku run python manage.py db upgrade --app todo-pro
