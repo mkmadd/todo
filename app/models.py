@@ -23,7 +23,7 @@ class Todo(db.Model):
     completed = db.Column(db.Boolean)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
     project = db.relationship('Project', 
-                backref=db.backref('todos', lazy='dynamic'))
+                backref=db.backref('todos', cascade="all, delete-orphan", lazy='dynamic'))
 
     def __init__(self, name, project):
         self.name = name

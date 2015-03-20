@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block body %}
+	<h1>Edit Todo</h1>
+	<form action="" method="post" name="edit_todo">
+		<!-- hidden_tag() needed in all forms for CSRF prevention -->
+		{{ form.hidden_tag() }}
+		<p>
+			{% for field in form: %}
+				{% if field.type != 'CSRFTokenField': %}
+					{{ field.label }} {{ field }}<br>
+					{% for error in field.errors %}
+						<span style="color: red;">[{{ error }}]</span>
+					{% endfor %}<br>
+				{% endif %}
+			{% endfor %}<br>
+		</p>
+		<p><input type="submit" value="Update Todo"> <a href="{{ url_for('index') }}">cancel</a></p>
+	</form>
+{% endblock %}

@@ -3,6 +3,7 @@
 		<title>{{title if title else 'My Awesome To-do App'}}</title>
 	</head>
 	<body>
+		<p><a href="{{ url_for('index') }}">Home</a></p>
 		{% with messages = get_flashed_messages() %}
 			{% if messages %}
 				<ul>

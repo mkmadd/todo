@@ -32,6 +32,8 @@ workon todo
 # Deploy
 # $ git remote add pro https://git.heroku.com/todo-pro.git
 # $ git remote add stage https://git.heroku.com/todo-stage.git
+# $ git push stage master
+# $ git push pro master
 # $ heroku config:set APP_SETTINGS=config.StagingConfig --remote stage
 # $ heroku config:set APP_SETTINGS=config.ProductionConfig --remote pro
 # $ heroku addons:add heroku-postgresql:dev --app todo-stage	# adds DATABASE_URL environ variable
@@ -42,3 +44,5 @@ workon todo
 # Apply db migrations to Heroku
 # $ heroku run python manage.py db upgrade --app todo-stage
 # $ heroku run python manage.py db upgrade --app todo-pro
+# $ heroku run python populate.py --app todo-stage
+# $ heroku run python populate.py --app todo-pro

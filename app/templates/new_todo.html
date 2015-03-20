@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block body %}
-	<h1>New project</h1>
-	<form action="" method="post" name="new_project">
+	<h1>New todo</h1>
+	<form action="" method="post" name="new_todo">
 		<!-- hidden_tag() needed in all forms for CSRF prevention -->
 		{{ form.hidden_tag() }}
 		<p>
@@ -10,7 +10,8 @@
 			{% for error in form.name.errors %}
 				<span style="color: red;">[{{ error }}]</span>
 			{% endfor %}<br>
+			{# {{ form.project_id.label }} {{ form.project_id }}<br> #}
 		</p>
-		<p><input type="submit" value="Create New Project"></p>
+		<p><input type="submit" value="Create New Todo"></p>
 	</form>
 {% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block body %}
+	<h1>{{ todo.name }}</h1>
+	<a href="{{ url_for('edit_todo', id=todo.id) }}">Edit</a>
+	<a href="{{ url_for('delete_todo', id=todo.id) }}">Delete</a>
+	<p>{{ todo.description|safe }}</p>
+	<p>
+		Start date: {{ todo.start_date }}<br>
+		Due date: {{ todo.due_date }}<br>
+		Completed: {{ 'Yes' if todo.completed else 'No' }}<br>
+		Belongs to: <a href="{{ url_for('show_project', id=todo.project.id) }}">{{ todo.project.name }}</a>
+	</p>
+{% endblock %}
