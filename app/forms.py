@@ -1,7 +1,8 @@
 from flask.ext.wtf import Form
+from flask.ext.wtf.html5 import URLField
 from wtforms import StringField, SelectField, DateTimeField, BooleanField, \
                     TextAreaField
-from wtforms.validators import DataRequired, Optional
+from wtforms.validators import DataRequired, Optional, URL
 
 class NewProjectForm(Form):
     name = StringField('Name', validators=[DataRequired()])
@@ -15,6 +16,7 @@ class EditProjectForm(Form):
     start_date = DateTimeField('Started On', validators=[Optional()])
     due_date = DateTimeField('Due On', validators=[Optional()])
     completed = BooleanField('Completed')
+    image = URLField('Image', validators=[Optional(), URL()])
 
 class EditTodoForm(Form):
     name = StringField('Name', validators=[DataRequired()])
@@ -22,3 +24,4 @@ class EditTodoForm(Form):
     start_date = DateTimeField('Started On', validators=[Optional()])
     due_date = DateTimeField('Due On', validators=[Optional()])
     completed = BooleanField('Completed')
+    image = URLField('Image', validators=[Optional(), URL()])

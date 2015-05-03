@@ -10,16 +10,25 @@
 			{% for error in form.name.errors %}
 				<span style="color: red;">[{{ error }}]</span>
 			{% endfor %}<br>
-			{{ form.start_date.label }} {{ form.start_date }}<br>
+			{{ form.start_date.label }}
+			{{ form.start_date(placeholder="1999-01-01 23:59:59") }}<br>
 			{% for error in form.start_date.errors %}
 				<span style="color: red;">[{{ error }}]</span>
 			{% endfor %}<br>
-			{{ form.due_date.label }} {{ form.due_date }}<br>
+			{{ form.due_date.label }}
+			{{ form.due_date(placeholder="1999-01-01 23:59:59") }}<br>
 			{% for error in form.due_date.errors %}
 				<span style="color: red;">[{{ error }}]</span>
 			{% endfor %}<br>
 			{{ form.completed.label }} {{ form.completed }}<br>
+			{{ form.image.label }} {{ form.image }}<br>
+			{% for error in form.image.errors %}
+				<span style="color: red;">[{{ error }}]</span>
+			{% endfor %}<br>
 		</p>
-		<p><input type="submit" value="Update Project"> <a href="{{ url_for('index') }}">cancel</a></p>
+		<p>
+			<input type="submit" value="Update Project">
+			<a href="{{ url_for('index') }}">cancel</a>
+		</p>
 	</form>
 {% endblock %}

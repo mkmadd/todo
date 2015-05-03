@@ -18,3 +18,11 @@ Then error: command 'i686-linux-gnu-gcc' failed with exit status 1 trying to pip
 sudo apt-get install python-dev
 That got it to work
 
+Got into issue with database migrations: when deleted Projects, trying to upgrade after migration gave error because Todo dependent on Project.  Manually deleted all tables from database, but then Alembic was stuck on an upgraded migration.  To get around it, `$ python manage.py db stamp head` to tell Alembic that at most updated version, then ran db migrate and db upgrade again
+
+
+Questions
+
+Why String(80), String(250) in db models?
+Database Migrations
+SQL Alchemy queries  https://gist.github.com/podhmo/4345741

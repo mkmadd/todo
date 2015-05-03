@@ -1,18 +1,28 @@
 from app import db
-from app.models import Project, Todo
+from app.models import User, Todo
 
+User.query.delete()
 Todo.query.delete()
-Project.query.delete()
+# Project.query.delete()
 
-p1 = Project("Udacity's Project 3")
-p2 = Project("Udacity's Project 4")
-p3 = Project("Udacity's Project 5")
-p4 = Project("Coursera Data Science Capstone")
-p5 = Project("Get Cool Job")
+u1 = User('mkmadd@gmail.com')
 
-td1 = Todo('Populate database with some items', p1)
-td2 = Todo('Change index to display items', p1)
-td3 = Todo('Go to bed', p1)
+db.session.add(u1)
+db.session.commit()
+
+p1 = Todo("Udacity's Project 3", u1)
+p2 = Todo("Udacity's Project 4", u1)
+p3 = Todo("Udacity's Project 5", u1)
+p4 = Todo("Coursera Data Science Capstone", u1)
+p5 = Todo("Get Cool Job", u1)
+
+td1 = Todo('Implement JSON endpoint with all required content', u1, p1)
+td2 = Todo('Implement additional API endpoints, such as RSS, Atom, or XML', u1, p1)
+td3 = Todo('3rd party authentication and authorization', u1, p1)
+td4 = Todo('Projects and tasks identical models', u1, p1)
+td5 = Todo('Front end work', u1, p1)
+td6 = Todo('Add prioritization (optional)', u1, p1)
+
 
 db.session.add(p1)
 db.session.add(p2)
@@ -22,5 +32,8 @@ db.session.add(p5)
 db.session.add(td1)
 db.session.add(td2)
 db.session.add(td3)
+db.session.add(td4)
+db.session.add(td5)
+db.session.add(td6)
 
 db.session.commit()

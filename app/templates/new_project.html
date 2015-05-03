@@ -6,7 +6,8 @@
 		<!-- hidden_tag() needed in all forms for CSRF prevention -->
 		{{ form.hidden_tag() }}
 		<p>
-			{{ form.name.label }} {{ form.name(size=80) }}<br>
+			{{ form.name.label }}
+			{{ form.name(autofocus=true, required=true, size=80) }}<br>
 			{% for error in form.name.errors %}
 				<span style="color: red;">[{{ error }}]</span>
 			{% endfor %}<br>

@@ -2,15 +2,24 @@
 
 {% block body %}
 	<h1>{{ project.name }}</h1>
-	<a href="{{ url_for('edit_project', id=project.id) }}">Edit</a>
-	<a href="{{ url_for('delete_project', id=project.id) }}">Delete</a>
+	{% if project.image: %}
+	<img src="{{ project.image }}" alt="Project image" style="width:128px;height:128px;">
+	{% endif %}
+	<form action="{{ url_for('edit_project', id=project.id) }}" method="GET" name="edit_project">
+		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+		<input type="submit" value="edit">
+	</form>
+	<form action="{{ url_for('delete_project', id=project.id) }}" method="POST" name="delete_project">
+		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+		<input type="submit" value="delete">
+	</form>
 	<p>
 		Start date: {{ project.start_date }}<br>
 		Due date: {{ project.due_date }}<br>
 		Completed: {{ 'Yes' if project.completed else 'No' }}<br>
 		Items (<a href="{{  url_for('new_todo', id=project.id) }}">add new</a>):
 		<ul>
-			{% for todo in project.todos.all(): %}
+			{% for todo in project.children.all(): %}
 				<li>
 					<a href="{{ url_for('show_todo', id=todo.id) }}">{{ todo.name }}</a>
 					{% if todo.completed %}
