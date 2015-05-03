@@ -6,6 +6,26 @@
 				filename='css/style.css') }}">
 	</head>
 	<body>
+		<!-- SDK for Facebook login -->
+		<script>
+			window.fbAsyncInit = function() {
+				FB.init({
+					appId      : '1603805816571831',
+					xfbml      : true,
+					version    : 'v2.3'
+				});
+			};
+
+			(function(d, s, id){
+				 var js, fjs = d.getElementsByTagName(s)[0];
+				 if (d.getElementById(id)) {return;}
+				 js = d.createElement(s); js.id = id;
+				 js.src = "//connect.facebook.net/en_US/sdk.js";
+				 fjs.parentNode.insertBefore(js, fjs);
+			 }(document, 'script', 'facebook-jssdk'));
+		</script>
+		
+		<!-- Header -->
 		<p><a href="{{ url_for('index') }}">Home</a></p>
 		{% with messages = get_flashed_messages() %}
 			{% if messages %}
@@ -16,6 +36,8 @@
 				</ul>
 			{% endif %}
 		{% endwith %}
+		
+		<!-- Content -->
 		{% block body %}{% endblock %}
 	</body>
 </html>
