@@ -3,9 +3,12 @@ from app.models import User, Todo
 
 User.query.delete()
 Todo.query.delete()
+db.session.commit()
+
 # Project.query.delete()
 
-u1 = User('mkmadd@gmail.com')
+u1 = User('github$6936085')
+u1.name = 'mkmadd'
 
 db.session.add(u1)
 db.session.commit()

@@ -20,9 +20,21 @@ That got it to work
 
 Got into issue with database migrations: when deleted Projects, trying to upgrade after migration gave error because Todo dependent on Project.  Manually deleted all tables from database, but then Alembic was stuck on an upgraded migration.  To get around it, `$ python manage.py db stamp head` to tell Alembic that at most updated version, then ran db migrate and db upgrade again
 
+Tried to install git with sudo apt-get install git and couldn't reach archive.ubuntu.com - had to vagrant halt and vagrant up to get it working
+
+Problems with authentication:
+Google - "KeyError: 'Decoder failed to handle access_token with data as returned by provider. A different decoder may be needed." -> using decoder: json.loads in get_auth_session fixed
+Twitter - "KeyError: 'Decoder failed to handle oauth_token with data as returned by provider. A different decoder may be needed ... Desktop applications only support the oauth_callback value ‘oob’/oauth/request_token" -> setting a callback url in twitter app settings fixed issue
+
+Issue with inability to delete table 'user'.  Would fail telling me another table had user as foreign key, despite cascade='all, delete-orphan'.  Problem was that 'user' is postgresql reserved word.  Changing tablename to client_user fixed problem.
 
 Questions
 
 Why String(80), String(250) in db models?
 Database Migrations
 SQL Alchemy queries  https://gist.github.com/podhmo/4345741
+Oauth 1
+
+
+Writeup
+Oauth 2

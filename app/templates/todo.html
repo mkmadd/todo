@@ -18,6 +18,18 @@
 		Start date: {{ todo.start_date }}<br>
 		Due date: {{ todo.due_date }}<br>
 		Completed: {{ 'Yes' if todo.completed else 'No' }}<br>
-		Belongs to: <a href="{{ url_for('show_project', id=todo.parent.id) }}">{{ todo.parent.name }}</a>
-	</p>
+		{% if todo.parent %}
+		Belongs to: <a href="{{ url_for('show_todo', id=todo.parent.id) }}">{{ todo.parent.name }}</a><br>
+		{% endif %}
+		Items (<a href="{{  url_for('new_todo', id=todo.id) }}">add new</a>):
+		<ul>
+			{% for child in todo.children.all(): %}
+				<li>
+					<a href="{{ url_for('show_todo', id=child.id) }}">{{ child.name }}</a>
+					{% if child.completed %}
+					<img src="{{ url_for('static', filename='tick_green_big.gif') }}" alt="Checkmark Icon">
+					{% endif %}
+				</li>
+			{% endfor %}
+		</ul>	</p>
 {% endblock %}
