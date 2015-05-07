@@ -20,6 +20,24 @@ class User(UserMixin, db.Model):
     def __init__(self, social_id):
         self.social_id = social_id
         self.administrator = False
+    
+    def __repr__(self):
+        return '<User: {}>'.format(self.name)
+    
+    @property
+    def serialize(self):
+        """ Return object data in easily serializable format """
+        return {
+            'name':             self.name,
+            'id':               self.id,
+            'social_id':        self.social_id,
+            'email':            self.email,
+            'administrator':    self.administrator
+        }
+    
+    @property
+    def is_admin(self):
+        return self.administrator
 
 # class Project(db.Model):
     # id = db.Column(db.Integer, primary_key=True)
@@ -68,3 +86,17 @@ class Todo(db.Model):
 
     def __repr__(self):
         return '<Todo: {}>'.format(self.name)
+
+    @property
+    def serialize(self):
+        """ Return object data in easily serializable format """
+        
+        return {
+            'name':             self.name,
+            'id':               self.id,
+            'description':      self.description,
+            'start_date':       self.start_date,
+            'due_date':         self.due_date,
+            'completed':        self.completed,
+            'owner':            self.owner.name
+        }

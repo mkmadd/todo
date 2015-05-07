@@ -17,7 +17,7 @@ from urllib import urlencode
 from requests import get, delete, post
 from flask.ext.login import current_user
 
-
+# added revoke method
 class OAuthSignIn(object):
     providers = None
 
