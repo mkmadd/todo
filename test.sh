@@ -14,7 +14,8 @@ workon todo
 # $ echo 'export DATABASE_URL="postgresql:///todo"' >> $VIRTUAL_ENV/bin/postactivate
 # $ echo 'export APP_SETTINGS="config.DevelopmentConfig"' >> $VIRTUAL_ENV/bin/postactivate
 # $ workon todo   # restart the environment
-
+# $ cat $VIRTUAL_ENV/bin/postactivate		# show virtualenvwrapper env vars
+# $ echo $DATABASE_URL		# show one env var
 
 # FOR Heroku
 # create file called Procfile:

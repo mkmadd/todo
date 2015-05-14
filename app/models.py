@@ -1,3 +1,8 @@
+"""
+    Define the SQLAlchemy models used in app
+
+"""
+
 from app import db
 from flask.ext.login import UserMixin
 
@@ -9,13 +14,15 @@ from flask.ext.login import UserMixin
 # email or it's optional.  So need to use social id, but that gives different 
 # users for each type of social login.
 class User(UserMixin, db.Model):
+    """ Define user model for person logged in """
     __tablename__ = 'client_user'
 
     id = db.Column(db.Integer, primary_key=True)
+    # Unique external identifier for pairing authenticated user with id
     social_id = db.Column(db.String(250), unique=True)
-    email = db.Column(db.String(250))
+    email = db.Column(db.String(250))   # not currently used
     name = db.Column(db.String(80))
-    administrator = db.Column(db.Boolean)
+    administrator = db.Column(db.Boolean)   # only admins get user list
 
     def __init__(self, social_id):
         self.social_id = social_id
@@ -39,22 +46,8 @@ class User(UserMixin, db.Model):
     def is_admin(self):
         return self.administrator
 
-# class Project(db.Model):
-    # id = db.Column(db.Integer, primary_key=True)
-    # name = db.Column(db.String(80), nullable=False)
-    # start_date = db.Column(db.DateTime)
-    # due_date = db.Column(db.DateTime)
-    # completed = db.Column(db.Boolean)
-    # image = db.Column(db.String)
-    
-    # def __init__(self, name):
-        # self.name = name
-        # self.completed = False
-        
-    # def __repr__(self):
-        # return '<Project: {}>'.format(self.name)
-
 class Todo(db.Model):
+    """ Define shared model for projects and todos """
     __tablename__ = 'todo'
     
     id = db.Column(db.Integer, primary_key=True)
@@ -69,7 +62,7 @@ class Todo(db.Model):
                 backref=db.backref('children', 
                                    cascade="all, delete-orphan", 
                                    lazy='dynamic'))
-    image = db.Column(db.String)
+    image = db.Column(db.String)    # url string for file of image for this todo
     owner_id = db.Column(db.Integer, 
                          db.ForeignKey('client_user.id', ondelete='CASCADE'), 
                          nullable=False)
@@ -81,7 +74,7 @@ class Todo(db.Model):
     def __init__(self, name, owner, parent=None):
         self.name = name
         self.owner = owner
-        self.parent = parent
+        self.parent = parent    # Projects don't have a parent
         self.completed = False
 
     def __repr__(self):

@@ -1,3 +1,8 @@
+"""
+    Temp script for testing database input/output
+    
+"""
+
 from app import db
 from app.models import User, Todo
 # from pickle import load

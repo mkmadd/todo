@@ -6,6 +6,7 @@ Alembic for handling database migrations  (also look at SQLAlchemy-migrate)
 Flask-Security for handling
 
 Structure from miguel grinberg's flask mega tutorial - http://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
+Oauth code from miguel grinberg's OAuth Authentication with Flask - https://github.com/miguelgrinberg/flask-oauth-example
 Alembic and config.py code from https://realpython.com/blog/python/flask-by-example-part-1-project-setup/
 
 #!/usr/bin/env python  # problems with running $ run.py.  $ ./run.py after UNIX EOL ending conversion worked
@@ -28,13 +29,36 @@ Twitter - "KeyError: 'Decoder failed to handle oauth_token with data as returned
 
 Issue with inability to delete table 'user'.  Would fail telling me another table had user as foreign key, despite cascade='all, delete-orphan'.  Problem was that 'user' is postgresql reserved word.  Changing tablename to client_user fixed problem.
 
+Problems trying to post form with AJAX when the form was inserted via another AJAX call.
+First, the js code had to be on the form html snippet that was loaded, or it wouldn't find the form id when registering the submit event function.  Second, had problems with posting immediately after loading edit form.
+Had to separate out the submit event registration and the ajax call into separate function.
+
+When dynamically adding li element to ul, my on click function wasn't working for the new elements:
+$('.nav.nav-pills .li').on('click', function(){
+	$('.nav.nav-pills li.active').removeClass('active');
+	$(this).addClass('active');
+});
+Got it to work by changing to:
+$('.nav.nav-pills').on('click', 'li', function(){
+	$('.nav.nav-pills li.active').removeClass('active');
+	$(this).addClass('active');
+});
+More at http://api.jquery.com/on/
+
+
+
 Questions
 
 Why String(80), String(250) in db models?
 Database Migrations
 SQL Alchemy queries  https://gist.github.com/podhmo/4345741
 Oauth 1
-
+WTForms - why not getting errors?
 
 Writeup
 Oauth 2
+Forms - 
+
+
+Look at:
+Flask-Security - https://pythonhosted.org/Flask-Security/ (combines Flask-Login, -Mail, -Principal, -Script, -WTF, itsdangerous, passlib

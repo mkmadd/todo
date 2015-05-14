@@ -1,27 +1,172 @@
+<!DOCTYPE html>
 <html>
 	<head>
-		<title>{{title if title else 'My Awesome To-do App'}}</title>
+		<meta charset="utf-8">
+		<title>{{title if title else 'Much Todo About Nothing'}}</title>
 		<!--meta name="csrf_token" content="{{ csrf_token() }}" /-->
-		<link rel=stylesheet type=text/css href="{{ url_for('static', 
-				filename='css/style.css') }}">
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+		
+		{% if not current_user.is_authenticated() %}
+    <!-- from bootstrap-social: http://lipis.github.io/bootstrap-social/ -->
+    <link href="{{ url_for('static', filename='css/assets/css/font-awesome.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap-social.css') }}" rel="stylesheet">
+		{% else %}
+		<!-- from bootstrap-datepicker: https://github.com/eternicode/bootstrap-datepicker -->
+		<link href="{{ url_for('static', filename='bootstrap-datepicker/css/bootstrap-datepicker3.min.css') }}" rel="stylesheet">
+		{% endif %}
+
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
+
 	</head>
 	<body>
-		<!-- Header -->
-		<p><a href="{{ url_for('index') }}">Home</a></p>
-		{% if current_user.is_authenticated() %}
-			<p><a href="{{ url_for('logout') }}">Logout</a></p>
-		{% endif %}
-		{% with messages = get_flashed_messages() %}
-			{% if messages %}
-				<ul>
-					{% for message in messages %}
-						<li>{{message}}</li>
-					{% endfor %}
-				</ul>
-			{% endif %}
-		{% endwith %}
+		<!-- Header contains navbar and flash messages -->
+		<header>
+		
+		<!-- Navbar with home link and logout button if logged in -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+					<!-- 'hamburger' icon button at smartphone level -->
+          <button type="button" class="navbar-toggle collapsed" 
+									data-toggle="collapse" data-target="#navbar" 
+									aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{{ url_for('index') }}">
+						<span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+						Much Todo About Nothing
+					</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+					{% if current_user.is_authenticated() %}
+					<ul class="nav navbar-nav navbar-right">
+							<li><a href="{{ url_for('logout') }}">Logout</a></li>
+					</ul>
+					<p class="navbar-text navbar-right">
+						Logged in as {{ current_user.name }}.
+					</p>
+					{% endif %}
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+		
+		{#% include '_flash.html' %#}
+		
+		</header>
 		
 		<!-- Content -->
+		<main>
 		{% block body %}{% endblock %}
+		</main>
+		
+		<!-- jquery, bootstrap, and datepicker widget js libraries -->
+		<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+		<script src="{{ url_for('static', filename='bootstrap-datepicker/js/bootstrap-datepicker.js') }}"></script>
+		
+		<!-- jquery to make todo work -->
+		<script type="text/javascript">
+			// csrf token for use in AJAX post requests
+			var csrf_token = '{{ csrf_token() }}';
+			
+			// make clicked side nav pill active
+			$('.nav.nav-pills').on('click', 'li', function(){
+				$('.nav.nav-pills li.active').removeClass('active');
+				$(this).addClass('active');
+			});
+			
+			// generic function to make AJAX request with no special post-handling
+			// Expects html return which it displays to the side
+			function call_url(url, method) {
+				$.ajaxSetup({
+					beforeSend: function(xhr, settings) {
+						if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && 
+								!this.crossDomain) {
+								xhr.setRequestHeader("X-CSRFToken", csrf_token);
+						}
+					}
+				});
+				$.ajax({
+					url: url,
+					type: method,
+					success: function(data) {
+							$('#side_section').html(data);
+					},
+					error: function(error) {
+							console.log(error);
+							$('#side_section').html(error['responseText']);
+					}
+				});
+			};
+
+			// Send POST to delete todo, and remove from nav list if applicable
+			function del_proj(url, name) {
+				var mess = 'Are you sure you want to delete < ' + name +
+									 ' > and all its children?'
+				if (confirm(mess)==true) {
+					// Setup CSRF token
+					$.ajaxSetup({
+						beforeSend: function(xhr, settings) {
+							xhr.setRequestHeader("X-CSRFToken", csrf_token)
+						}
+					});
+					$.ajax({
+						url: url,
+						type: 'POST',
+						success: function(data) {
+							// if project was in sidebar, remove it
+							if (data['delete']) {
+								$('#proj' + data['id']).remove();
+							}
+							$('#side_section').html(data['html']);
+						},
+						error: function(error) {
+								console.log(error);
+								$('#side_section').html(error['responseText']);
+						}
+					});
+				}
+			};
+
+			// Send POST to toggle 'Completed' status
+			function toggle_comp(url) {
+				// Setup CSRF token
+				$.ajaxSetup({
+					beforeSend: function(xhr, settings) {
+						xhr.setRequestHeader("X-CSRFToken", csrf_token)
+					}
+				});
+				$.ajax({
+					url: url,
+					type: 'POST',
+					success: function(data) {
+						// if todo was a root, need to update the side nav
+						if (data['is_root']) {
+							// change side pill to include or not include checkmark
+							if (data['completed']) {
+								var name = data['name'] + ' <img src="' + 
+									'{{ url_for('static', filename='tick_green_big.gif') }}' + 
+									'" alt="Checkmark Icon">';
+							} else {
+								var name = data['name'];
+							}
+							$('#proj' + data['id'] + ' > a').html(name);
+						}
+						// Show todo info in side section
+						$('#side_section').html(data['html']);
+					},
+					error: function(error) {
+							console.log(error);
+							$('#side_section').html(error['responseText']);
+					}
+				});
+			};
+		</script>
 	</body>
 </html>

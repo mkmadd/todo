@@ -1,0 +1,31 @@
+<div class="container">
+	{% include '_flash.html' %}	
+	<div class="row">
+		<div class="col-sm-4 col-sm-offset-4">
+			<h2 class="text-center">Greetings!</h2>
+			<p class="text-center">
+				Please log in to create and view your todo lists.
+			</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-4 col-lg-4 col-lg-offset-4 social-buttons">
+			<a class="btn btn-block btn-social btn-lg btn-google" 
+					href="{{ url_for('oauth_authorize', provider='google') }}">
+				<i class="fa fa-google-plus"></i> Sign in with Google
+			</a>
+			<a class="btn btn-block btn-social btn-lg btn-facebook" 
+					href="{{ url_for('oauth_authorize', provider='facebook') }}">
+				<i class="fa fa-facebook"></i> Sign in with Facebook
+			</a>
+			<a class="btn btn-block btn-social btn-lg btn-github" 
+					href="{{ url_for('oauth_authorize', provider='github') }}">
+				<i class="fa fa-github"></i> Sign in with GitHub
+			</a>
+			<a class="btn btn-block btn-social btn-lg btn-twitter" 
+					href="{{ url_for('oauth_authorize', provider='twitter') }}">
+				<i class="fa fa-twitter"></i> Sign in with Twitter
+			</a>
+		</div>
+	</div>
+</div>

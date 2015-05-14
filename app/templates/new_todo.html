@@ -1,21 +1,143 @@
-{% extends "base.html" %}
+{% if not request.is_xhr %}
+	{% extends "base.html" %}
+{% else %}
+	{% include '_flash.html' %}
+{% endif %}
 
 {% block body %}
-	<h1>New todo</h1>
-	<form action="" method="post" name="new_todo">
+	<ol class="breadcrumb">
+		{% for ancestor in ancestry %}
+			<li>
+				<a href="javascript:call_url('{{ url_for('show_todo', id=ancestor.id) }}', 'GET')">
+					{{ ancestor.name }}
+				</a>
+			</li>
+		{% endfor %}
+			<li class="active">
+				<b>new {{ 'todo' if parent else 'project' }} (create)</b>
+			</li>
+	</ol>
+	<form class="form-horizontal" 
+		action="{{ url_for('new_todo', id=parent.id if parent else None) }}" 
+		method="post" id="new_form">
 		<!-- hidden_tag() needed in all forms for CSRF prevention -->
 		{{ form.hidden_tag() }}
-		<p>
-			{{ form.name.label }} 
-			{{ form.name(autofocus=true, required=true, size=80) }}<br>
-			{% for error in form.name.errors %}
+		<div class="form-group {{ 'has-error' if form.name.errors }}">
+			<label for="{{ form.name.id }}" class="col-sm-2 control-label">
+				{{ form.name.label.text }}
+			</label>
+			<div class="col-sm-8">
+			{{ form.name(autofocus=true, required=true, class="form-control") }}<br/>
+			{#% for error in form.name.errors %}
 				<span style="color: red;">[{{ error }}]</span>
-			{% endfor %}<br>
-			{# {{ form.project_id.label }} {{ form.project_id }}<br> #}
-		</p>
-		<p>
-			<input type="submit" value="Create New Todo">
-			<a href="{{ url_for('index') }}">cancel</a>
-		</p>
+			{% endfor %#}<br/>
+			</div>
+		</div>
+		<div id="hidden_fields" class="hidden">
+			{% for field in form %}
+				{% if field.name != 'name' and field.type != 'CSRFTokenField' %}
+				<div class="form-group {{ 'has-error' if field.errors }}">
+					<label for="{{ field.id }}" class="col-sm-2 control-label">
+						{{ field.label.text }}
+					</label>
+					<div class="col-sm-8">
+					{% if field.type == 'BooleanField' %}
+						{{ field }}
+					{% elif field.type == 'DateField' %}
+						{{ field(class_="form-control datepicker") }}
+					{% else %}
+						{{ field(class_="form-control") }}
+					{% endif %}
+					{% for error in field.errors %}
+						<span class="help-inline">[{{ error }}]</span>
+					{% endfor %}
+					</div>
+				</div>
+				{% endif %}
+			{% endfor %}<br/>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-4">
+				<button type="submit" class="btn btn-default">
+					Create New {{'Todo' if parent else 'Project'}}
+				</button> 
+				<a href="{{ url_for('index') }}" >cancel</a>
+			</div>
+		</div>
 	</form>
+	<div class="checkbox col-sm-offset-2 col-sm-4">
+		<label>
+			<input type="checkbox" id="opt_check"> Show more options
+		</label>
+	</div>
 {% endblock %}
+
+	<script>
+		// code to show or hide extra fields
+		$('#opt_check').click(function(){
+			if ($('#opt_check').is(':checked')) {
+				$('#hidden_fields').removeClass('hidden');
+			} else {
+				$('#hidden_fields').addClass('hidden');
+			}
+		});
+		
+		// Code to submit the form using AJAX
+		// Without breaking these into two, the form would load and immediately post
+		$('#new_form').submit(function(event) {
+			// Don't want the form to submit normally, want an AJAX submission
+			event.preventDefault();
+			post_it();
+			
+		});
+		function post_it() {
+			console.log('into post_it')
+			// CSRF protection
+			$.ajaxSetup({
+				beforeSend: function(xhr, settings) {
+					xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token() }}');
+				}
+			});
+			$.ajax({
+				type: 'POST',
+				url: $('#new_form').attr('action'),
+				data: $('#new_form').serialize(),
+				success: function(data) {
+					// show new todo on the side
+					$('#side_section').html(data['html']);
+					// if a project, need to add a pill to side nav and make it active
+					if (data['is_project']) {
+						// need just a name or name and checkmark?
+						if (data['completed']) {
+							var name = data['name'] + ' <img src="' + 
+								'{{ url_for('static', filename='tick_green_big.gif') }}' +
+								'" alt="Checkmark Icon">';
+						} else {
+							var name = data['name'];
+						}
+						// make previous active class inactive
+						$('.nav.nav-pills li.active').removeClass('active');
+						// append new li as active
+						$('#side-container').append(
+							$('<li>').attr({id: "proj" + data['id'].toString()}).append(
+								$('<a>').attr({href: data['url']}).append(name)
+							).addClass('active')
+						);
+					}
+				},
+				error: function(error) {
+					console.log(error);
+					$('#side_section').html(error['responseText']);
+				}
+			});
+		}
+		// add a datepicker widget to Started On and Due On fields
+		// from http://eternicode.github.io/bootstrap-datepicker
+		$('.datepicker').datepicker({
+				format: 'yyyy-mm-dd',
+				clearBtn: true,
+				orientation: 'top auto',
+				autoclose: true,
+				todayHighlight: true
+		});
+	</script>

@@ -2,9 +2,11 @@
     Database migration program
     Code from Flask By Example https://realpython.com/blog/python/flask-by-example-part-2-postgres-sqlalchemy-and-alembic/
     
-    $ python manage.py db init  # initialize db
+    $ python manage.py db init      # initialize db
     $ python manage.py db migrate   # create first migration
-    $ python manage.py db upgrade    # apply migrations to database
+    $ python manage.py db upgrade   # apply migrations to database
+    $ python manage.py db stamp head    # when run into problems and need to 
+                                        # mark current state of db as up-to-date
 """
 
 from flask.ext.script import Manager

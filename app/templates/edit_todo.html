@@ -1,20 +1,116 @@
-{% extends "base.html" %}
+{% if not request.is_xhr %}
+	{% extends "base.html" %}
+{% else %}
+	{% include '_flash.html' %}
+{% endif %}
 
 {% block body %}
-	<h1>Edit {{ title }}</h1>
-	<form action="" method="post" name="edit_todo">
+	<!-- provide a breadcrumb trail of ancestors back to active project -->
+	<ol class="breadcrumb">
+		{% for ancestor in ancestry %}
+		<li>
+			<a href="javascript:call_url('{{ url_for('show_todo', id=ancestor.id) }}', 'GET')">
+				{{ ancestor.name }}
+			</a>
+		</li>
+		{% endfor %}
+		<li class="active"><b>{{ todo.name }} (edit)</b></li>
+	</ol>
+	<form id="edit_form" class="form-horizontal" 
+			action="{{ url_for('edit_todo', id=todo.id) }}" method="POST">
 		<!-- hidden_tag() needed in all forms for CSRF prevention -->
 		{{ form.hidden_tag() }}
-		<p>
-			{% for field in form: %}
-				{% if field.type != 'CSRFTokenField': %}
-					{{ field.label }} {{ field }}<br>
-					{% for error in field.errors %}
-						<span style="color: red;">[{{ error }}]</span>
-					{% endfor %}<br>
+
+		{% for field in form: %}
+			{% if field.type != 'CSRFTokenField' %}
+			<div class="form-group {{ 'has-error' if field.errors }}">
+				<label for="{{ field.id }}" class="col-sm-2 control-label">
+					{{ field.label.text }}
+				</label>
+				<div class="col-sm-8">
+				{% if field.name == 'name' %}
+					{{ field(class_="form-control", required=true, autofocus=true) }}
+				{% elif field.type == 'BooleanField' %}
+					{{ field }}
+				{% elif field.type == 'DateField' %}
+					{{ field(class_="form-control datepicker") }}
+				{% else %}
+					{{ field(class_="form-control") }}
 				{% endif %}
-			{% endfor %}<br>
-		</p>
-		<p><input type="submit" value="Update"> <a href="{{ url_for('index') }}">cancel</a></p>
+				{% for error in field.errors %}
+					<span class="help-inline">[{{ error }}]</span>
+				{% endfor %}
+				</div>
+			</div>
+			{% endif %}
+		{% endfor %}
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-1">
+				<input type="submit" value="Update">
+			</div>
+			<div class="col-sm-1">
+				{% if request.is_xhr %}
+				<a href="javascript:call_url('{{ url_for('show_todo', id=todo.id)
+						}}', 'GET')" >cancel</a>
+				{% else %}
+				<a href="{{ url_for('show_todo', id=todo.id) }}" >cancel</a>
+				{% endif %}
+			</div>
+		</div>
 	</form>
 {% endblock %}
+
+	<script>
+		// Code to submit the form using AJAX
+		// Without breaking these into two, the form would load and immediately post
+		$('#edit_form').submit(function(event) {
+			// Don't want the form to submit normally, want an AJAX submission
+			event.preventDefault();
+			post_it();
+			
+		});
+		function post_it() {
+			// CSRF protection
+			$.ajaxSetup({
+				beforeSend: function(xhr, settings) {
+					xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token() }}');
+				}
+			});
+			$.ajax({
+				type: 'POST',
+				url: $('#edit_form').attr('action'),
+				data: $('#edit_form').serialize(),
+				success: function(data) {
+					// if todo was a root project, need to update the side nav pill
+					if (data['is_root']) {
+						// update side pill with any name or completed status changes
+						if (data['completed']) {
+							var name = data['name'] + ' <img src="' + 
+								'{{ url_for('static', filename='tick_green_big.gif') }}' + 
+								'" alt="Checkmark Icon">';
+						} else {
+							var name = data['name'];
+						}
+						$('#proj' + data['id'] + ' > a').html(name);
+					}
+					// Show todo info in side section
+					$('#side_section').html(data['html']);
+				},
+				error: function(error) {
+					console.log(error);
+					$('#side_section').html(error['responseText']);
+				}
+			});
+		}
+		
+		// add a datepicker widget to Started On and Due On fields
+		// from http://eternicode.github.io/bootstrap-datepicker
+		$('.datepicker').datepicker({
+				format: 'yyyy-mm-dd',
+				clearBtn: true,
+				orientation: 'top auto',
+				autoclose: true,
+				todayHighlight: true
+		});
+
+	</script>

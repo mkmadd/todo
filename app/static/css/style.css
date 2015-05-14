@@ -1,7 +1,42 @@
+body {
+    padding-top: 70px;
+}
+
+header { 
+    display: block;
+}
+/*
 .inline-block {
 	display: inline-block;
 }
 
 .inline {
 	display: inline;
+}
+*/
+div[class~="alert"] {
+    height: 30px;
+    padding-top: 5px;
+    padding-right: 20px;
+}
+
+#show-btn-grp {
+	margin-bottom: 10px;
+}
+
+#show-description {
+	margin-top: 20px;
+}
+
+.breadcrumb {
+	background-color: #337AB7;
+}
+
+.breadcrumb > .active {
+	color: white;
+}
+
+.breadcrumb > li > a {
+	color: white;
+	font-style: italic;
 }

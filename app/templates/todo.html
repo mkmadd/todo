@@ -1,35 +1,110 @@
-{% extends "base.html" %}
+{% if not request.is_xhr %}
+	{% extends "base.html" %}
+{% else %}
+	{% include '_flash.html' %}
+{% endif %}
 
 {% block body %}
-	<h1>{{ todo.name }}</h1>
-	{% if todo.image: %}
-	<img src="{{ todo.image }}" alt="Project image" style="width:128px;height:128px;">
-	{% endif %}
-	<form action="{{ url_for('edit_todo', id=todo.id) }}" method="GET" name="edit_todo">
-		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-		<input type="submit" value="edit">
-	</form>
-	<form action="{{ url_for('delete_todo', id=todo.id) }}" method="POST" name="delete_todo">
-		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-		<input type="submit" value="delete">
-	</form>
-	<p>Description:<br>{{ todo.description|safe }}</p>
-	<p>
-		Start date: {{ todo.start_date }}<br>
-		Due date: {{ todo.due_date }}<br>
-		Completed: {{ 'Yes' if todo.completed else 'No' }}<br>
-		{% if todo.parent %}
-		Belongs to: <a href="{{ url_for('show_todo', id=todo.parent.id) }}">{{ todo.parent.name }}</a><br>
-		{% endif %}
-		Items (<a href="{{  url_for('new_todo', id=todo.id) }}">add new</a>):
-		<ul>
-			{% for child in todo.children.all(): %}
-				<li>
-					<a href="{{ url_for('show_todo', id=child.id) }}">{{ child.name }}</a>
-					{% if child.completed %}
-					<img src="{{ url_for('static', filename='tick_green_big.gif') }}" alt="Checkmark Icon">
-					{% endif %}
-				</li>
-			{% endfor %}
-		</ul>	</p>
+	<ol class="breadcrumb">
+		{% for ancestor in ancestry %}
+			<li><a href="javascript:call_url('{{ url_for('show_todo', id=ancestor.id) }}', 'GET')">{{ ancestor.name }}</a></li>
+		{% endfor %}
+			<li class="active"><b>{{ todo.name }}</b></li>
+	</ol>
+	<div class="well">
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="row"><div class="col-sm-12">
+				<!-- button group with mark, edit, delete -->
+				<div id="show-btn-grp" class="btn-group btn-group-xs" role="group">
+					<button type="button" class="btn btn-default" onclick="javascript:toggle_comp('{{
+							url_for('toggle_comp_todo', id=todo.id) }}')">Mark 
+						{% if todo.completed %}
+							<span class="glyphicon glyphicon-unchecked" aria-hidden="true">
+							</span>
+						{% else %}
+							<span class="glyphicon glyphicon-check" aria-hidden="true">
+							</span>
+						{% endif %}
+					</button>
+					<button type="button" class="btn btn-default" onclick="javascript:call_url('{{ 
+							url_for('edit_todo', id=todo.id) }}', 'GET')">Edit 
+						<span class="glyphicon glyphicon-edit" aria-hidden="true">
+						</span>
+					</button>
+					<button type="button" class="btn btn-default" onclick="javascript:del_proj('{{ 
+						url_for('delete_todo', id=todo.id) }}', '{{todo.name}}')">Delete
+						<span class="glyphicon glyphicon-remove-circle" aria-hidden="true">
+						</span>
+					</button>
+				</div><!-- end button group -->
+			</div></div>
+			<!-- start date, due date, completed, belongs to set -->
+			<div class="row"><div class="col-sm-12">
+				<div class="row">
+					<div class="col-sm-6 col-lg-4 text-right">
+						Start date:
+					</div>
+					<div class="col-sm-6 col-lg-8">
+						{{ todo.start_date.strftime("%b %-d, %Y") if todo.start_date else '' }}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6 col-lg-4 text-right">
+						Due date:
+					</div>
+					<div class="col-sm-6 col-lg-8">
+						{{ todo.due_date.strftime("%b %-d, %Y") if todo.due_date else ''  }}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6 col-lg-4 text-right">
+						Completed:
+					</div>
+					<div class="col-sm-6 col-lg-8">
+						{{ 'Yes' if todo.completed else 'No' }}
+					</div>
+				</div>
+				{% if todo.parent %}
+				<div class="row">
+					<div class="col-sm-6 col-lg-4 text-right">
+						Belongs to:
+					</div>
+					<div class="col-sm-6 col-lg-8">
+						 <a href="javascript:call_url('{{ url_for('show_todo', id=todo.parent.id) }}', 'GET')">{{ todo.parent.name }}</a>
+					</div>
+				</div>
+				{% endif %}
+			</div></div><!-- end start/due dates, completed, belongs to set -->
+			{% if todo.description %}
+			<div class="row"><div class="col-sm-12">
+				<p id="show-description">
+					{{ todo.description|safe }}<!-- allow sanitized html -->
+				</p>
+			</div></div>
+			{% endif %}
+		</div>
+		<div class="col-sm-6">
+				<img class="img-responsive img-rounded todo-image pull-right" src="{{ todo.image or 'http://www.coolnsmart.com/images/02/50616_original.jpg' }}" alt="Project image">
+		</div>
+	</div><!-- row -->
+	</div><!-- well -->
+
+	<!-- create nav list of child todo items -->
+	<div class="row">
+		<nav id="side-nav" class="col-sm-12">
+			<p>Items (<a href="javascript:call_url('{{  url_for('new_todo', id=todo.id) }}', 'GET')">add new</a>)</p>
+			<ul id="side-container" class="nav nav-pills nav-stacked">
+				{% for child in todo.children.all(): %}
+					<li>
+						<a href="javascript:call_url('{{ url_for('show_todo', id=child.id) }}', 'GET')">{{ child.name }}
+						{% if child.completed %}
+						<img src="{{ url_for('static', filename='tick_green_big.gif') }}" alt="Checkmark Icon">
+						{% endif %}
+						</a>
+					</li>
+				{% endfor %}
+			</ul>
+		</nav>
+	</div>
 {% endblock %}

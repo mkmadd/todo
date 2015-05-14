@@ -1,3 +1,8 @@
+"""
+    Script to populate db with some test data
+
+"""
+
 from app import db
 from app.models import User, Todo
 

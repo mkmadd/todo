@@ -1,27 +1,19 @@
+"""
+    Define forms used in app
+
+"""
+
 from flask.ext.wtf import Form
-from flask.ext.wtf.html5 import URLField
-from wtforms import StringField, SelectField, DateTimeField, BooleanField, \
+from wtforms.fields.html5 import URLField
+from wtforms import StringField, DateField, SelectField, BooleanField, \
                     TextAreaField
-from wtforms.validators import DataRequired, Optional, URL
+from wtforms.validators import InputRequired, Optional, URL
 
-# class NewProjectForm(Form):
-    # name = StringField('Name', validators=[DataRequired()])
-
-class NewTodoForm(Form):
-    name = StringField('Name', validators=[DataRequired()])
-    #project_id = SelectField('Parent Project', coerce=int)
-
-# class EditProjectForm(Form):
-    # name = StringField('Name', validators=[DataRequired()])
-    # start_date = DateTimeField('Started On', validators=[Optional()])
-    # due_date = DateTimeField('Due On', validators=[Optional()])
-    # completed = BooleanField('Completed')
-    # image = URLField('Image', validators=[Optional(), URL()])
-
+# Same fields used to create and edit, so on a refactor cut down to just edit
 class EditTodoForm(Form):
-    name = StringField('Name', validators=[DataRequired()])
+    name = StringField('Name', validators=[InputRequired()])
     description = TextAreaField('Description', validators=[Optional()])
-    start_date = DateTimeField('Started On', validators=[Optional()])
-    due_date = DateTimeField('Due On', validators=[Optional()])
-    completed = BooleanField('Completed')
+    start_date = DateField('Started On', validators=[Optional()])
+    due_date = DateField('Due On', validators=[Optional()])
     image = URLField('Image', validators=[Optional(), URL()])
+    completed = BooleanField('Completed')
