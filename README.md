@@ -56,8 +56,9 @@ The app is currently hosted on heroku and can be accessed at
 Or one can download and run the code.  `$ python run.py` will run the Flask app.  
 Though one will first need to provide env vars for:  
 
-* DATABASE_URL
-* TODO_SECRET_KEY
-* OAUTH_CREDENTIALS
-* TODO_ROOT_ADMIN_ID
+* DATABASE_URL			# e.g. "postgresql:///todo"
+* TODO_SECRET_KEY		# e.g. "my ultra secret key"
+* OAUTH_CREDENTIALS		# { "google" : { "id": "my id", "secret": "123..."} }
+* TODO_ROOT_ADMIN_ID	# for google, google$<your google id>
+* APP_SETTINGS  		# e.g. config.ProductionConfig
 

@@ -19,7 +19,8 @@ class Config(object):
     WTF_CSRF_ENABLED = True
     # Used to sign session cookies and other cryptographic stuff (e.g. CSRF)
     SECRET_KEY = os.environ.get('TODO_SECRET_KEY')
-    # client id and secrets for different social network providers
+    # client id and secrets for different social network providers.  In the 
+    # form { "google": { "id": "<client_id>", "secret": "<client_secret>"} }
     OAUTH_CREDENTIALS = os.environ.get('OAUTH_CREDENTIALS')
     ROOT_ADMIN_ID = os.environ.get('TODO_ROOT_ADMIN_ID')
 
@@ -34,8 +35,8 @@ class StagingConfig(Config):
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
-    with open('secrets.txt', 'rt') as f:
-        OAUTH_CREDENTIALS = json.load(f)
+    # with open('secrets.txt', 'rt') as f:
+        # OAUTH_CREDENTIALS = json.load(f)
     SECRET_KEY = 'development-use-only'
 
 class TestingConfig(Config):
