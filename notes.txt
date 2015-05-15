@@ -50,6 +50,8 @@ Problems on heroku final deployment:
 	- needed to change redirect callback uri setting at all social providers before logins worked
 	- After stamp heading and upgrading db migrations, still didn't work.  Reset the db from https://postgres.heroku.com/databases/ then rewrote populate.py to simply call db.create_all() and ran on heroku
 
+Issue - "InsecurePlatformWarning: A true SSLContext object is not available."  Either upgrade to python 2.7.9 or `pip install requests[security]`.  Did the latter, had to `sudo apt-get install libffi-dev` first
+
 Questions
 
 Why String(80), String(250) in db models?
