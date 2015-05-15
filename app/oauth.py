@@ -84,11 +84,13 @@ class GoogleSignIn(OAuthSignIn):
     # code for access token, then use access token to access user info
     def callback(self):
         # Make sure CSRF token was returned and is valid
+        print 'entering callback(); about to validate csrf'
         if not validate_csrf(request.args.get('state')):
             abort(403)
+        print 'looking for "code"'
         if 'code' not in request.args:
             return None, None, None
-
+        print 'trying to exchange auth code for access token...'
         # exchange authorization code for access token
         oauth_session = self.service.get_auth_session(
             data={'code': request.args['code'],
@@ -96,12 +98,13 @@ class GoogleSignIn(OAuthSignIn):
                   'redirect_uri': self.get_callback_url()},
             decoder=loads   # unique to Google; had to add decoder to work
         )
-        
+        print 'got access token;'
         # store access token for later revocation
         session['access_token'] = oauth_session.access_token
-
+        print 'trying to get user info'
         # get user info
         userinfo = oauth_session.get('userinfo').json()
+        print 'successfully got userinfo'
         
         # Google returns:
         # {u'family_name', u'name', u'picture', u'gender', u'email', 
