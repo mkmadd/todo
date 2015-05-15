@@ -45,7 +45,10 @@ $('.nav.nav-pills').on('click', 'li', function(){
 });
 More at http://api.jquery.com/on/
 
-
+Problems on heroku final deployment:
+	- needed to set envs.  Setting OAUTH_CREDENTIALS as JSON string didn't work, had to change code to json.loads(os.environ.get('OAUTH_CREDENTIALS') to get from str to dict
+	- needed to change redirect callback uri setting at all social providers before logins worked
+	- After stamp heading and upgrading db migrations, still didn't work.  Reset the db from https://postgres.heroku.com/databases/ then rewrote populate.py to simply call db.create_all() and ran on heroku
 
 Questions
 

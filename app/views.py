@@ -287,20 +287,16 @@ def oauth_authorize(provider):
 # https://github.com/miguelgrinberg/flask-oauth-example
 @app.route('/callback/<provider>')
 def oauth_callback(provider):
-    print 'entering oauth_callback'
     if not current_user.is_anonymous():
         return redirect(url_for('index'))
     oauth = OAuthSignIn.get_provider(provider)  # Get provider oauth object
-    print 'got oauth provider object; about to call oauth.callback()'
     social_id, name, email = oauth.callback()   # call its callback function
-    print 'back from oauth.callback()'
+
     if social_id is None:
         flash('Authentication failed.', 'danger')
         return redirect(url_for('index'))
     # find user by social_id returned
-    print 'looking for user...'
     user = User.query.filter_by(social_id=social_id).first()
-    print 'returned user; about to try creating and saving user...'
     if not user:        # if user doesn't exist, create
         user = User(social_id=social_id)
         # if user is me, give ULTIMATE POWAH
@@ -310,7 +306,7 @@ def oauth_callback(provider):
         user.email = email
         db.session.add(user)
         db.session.commit()
-    print 'successfully saved user; logging in...'
+
     login_user(user, True)
     session['provider'] = provider      # save provider
     flash('Logged in successfully.', 'success')
