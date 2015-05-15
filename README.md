@@ -62,3 +62,18 @@ Though one will first need to provide env vars for:
 * TODO_ROOT_ADMIN_ID	# for google, google$<your google id>
 * APP_SETTINGS  		# e.g. config.ProductionConfig
 
+## Code Layout
+
+The entry point into the code is run.py, which simply imports app from app and  
+runs it.  The other files in the base directory are notes, configuration files,  
+and helper scripts.
+
+The app directory contains the application code proper:  
+* `__init__.py` - initializes the Flask app, SQLAlchemy, and LoginManager
+* form.py - defines the form used on create and edit pages
+* models.py - defines database models
+* oauth.py - defines oauth classes for each social provider
+* views.py - defines all route handling functions
+* /static - static assets (css, js, images)
+* /templates - html page templates
+
